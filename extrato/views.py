@@ -1,9 +1,14 @@
 from datetime import timedelta
+from io import BytesIO
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages import constants
+from django.http import FileResponse
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.utils.timezone import now
+from weasyprint import HTML
 
 from core.utils import validate_fields
 from perfil.models import Categoria, Conta
@@ -99,3 +104,24 @@ def get_last_month_valores(valores):
     if now().day == 1:
         return valores.filter(data=now())
     return valores.filter(data=now() - timedelta(days=now().day - 1))
+
+
+def exportar_pdf(request):
+    valores = Valores.objects.filter(data__month=now().month)
+    contas = Conta.objects.all()
+    categorias = Categoria.objects.all()
+
+    path_template = str(settings.BASE_DIR / 'templates/partial/extrato.html')
+    path_output = BytesIO()
+
+    template_render = render_to_string(path_template, {
+        'valores': valores,
+        'contas': contas,
+        'categorias': categorias
+    })
+    HTML(string=template_render).write_pdf(path_output)
+
+    # setting pointer to initial position
+    path_output.seek(0)
+
+    return FileResponse(path_output, filename="extrato.pdf")

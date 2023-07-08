@@ -43,7 +43,9 @@
         </div>
       </form>
       <div class="col-md-2">
-        <a href="" class="botao-secundario">Exportar extrato</a>
+        <a href="{% url 'exportar_pdf' %}"
+           target="_blank"
+           class="botao-secundario">Exportar extrato</a>
       </div>
       <div class="col-md-2">
         <a href="{% url 'view_extrato' %}" class="botao-secundario">Limpar filtros</a>
