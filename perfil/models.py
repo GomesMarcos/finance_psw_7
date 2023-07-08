@@ -1,5 +1,7 @@
 from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models
+from django.db.models.aggregates import Sum
+from django.utils.timezone import now
 
 # Create your models here.
 
@@ -11,6 +13,19 @@ class Categoria(models.Model):
 
     def __str__(self):
         return self.categoria
+
+    def total_gasto(self):
+        from extrato.models import Valores
+
+        valores = Valores.objects.filter(categoria__id=self.id, data__month=now().month,
+                                         tipo='S').aggregate(Sum('valor'))
+        return valores['valor__sum'] or 0
+
+    def calcula_percentual_gasto_por_categoria(self):
+        try:
+            return abs(self.total_gasto() * 100) / self.valor_planejamento
+        except:
+            return 0
 
 
 class Conta(models.Model):

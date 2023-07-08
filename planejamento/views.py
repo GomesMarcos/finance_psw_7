@@ -55,3 +55,22 @@ def update_valor_categoria(request, id):
             'message': message,
             'class_name_list': class_name_list
         })
+
+
+def ver_planejamento(request):
+    categorias = Categoria.objects.all()
+    set_bg_strip(categorias)
+    return render(request, 'ver_planejamento.html', {'categorias': categorias})
+
+
+def set_bg_strip(categorias):
+    for index, categoria in enumerate(categorias):
+        total_percentage = abs(categoria.total_gasto() * 100) / categoria.valor_planejamento
+        if total_percentage < 80:
+            categorias[index].__setattr__('bg_strip', 'info')
+        elif total_percentage > 80 and total_percentage < 95:
+            categorias[index].__setattr__('bg_strip', 'warning')
+        elif total_percentage > 95 and total_percentage < 100:
+            categorias[index].__setattr__('bg_strip', 'danger')
+        else:
+            categorias[index].__setattr__('bg_strip', 'dark')
