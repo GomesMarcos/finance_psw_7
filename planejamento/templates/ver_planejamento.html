@@ -14,12 +14,11 @@
       <div class="col-md">
         <div class="card">
           {% for categoria in categorias %}
-            <p>{{ categoria }}</p>
-            <div>
-              <span style="float: left !important;">R$ {{ categoria.total_gasto }}</span>
+            <p>
+              <span style="float: left !important;">{{ categoria }}: R${{ categoria.total_gasto }}</span>
               <span style="float: right !important;">R$ {{ categoria.valor_planejamento }}</span>
-            </div>
-            <div class="progress">
+            </p>
+            <div class="progress mb-5">
               <div class="progress-bar progress-bar-striped bg-{{ categoria.bg_strip }}"
                    role="progressbar"
                    style="width: {{ categoria.calcula_percentual_gasto_por_categoria }}%"

@@ -65,12 +65,12 @@ def ver_planejamento(request):
 
 def set_bg_strip(categorias):
     for index, categoria in enumerate(categorias):
-        total_percentage = abs(categoria.total_gasto() * 100) / categoria.valor_planejamento
+        total_percentage = categoria.calcula_percentual_gasto_por_categoria()
         if total_percentage < 80:
             categorias[index].__setattr__('bg_strip', 'info')
-        elif total_percentage > 80 and total_percentage < 95:
+        elif total_percentage >= 80 and total_percentage <= 95:
             categorias[index].__setattr__('bg_strip', 'warning')
-        elif total_percentage > 95 and total_percentage < 100:
+        elif total_percentage >= 95 and total_percentage < 100:
             categorias[index].__setattr__('bg_strip', 'danger')
         else:
             categorias[index].__setattr__('bg_strip', 'dark')

@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from perfil.models import Categoria, Conta
@@ -6,7 +7,7 @@ from perfil.models import Categoria, Conta
 class Valores(models.Model):
     choice_tipo = (('E', 'Entrada'), ('S', 'Saída'))
 
-    valor = models.FloatField()
+    valor = models.FloatField(validators=[MinValueValidator(0.01)])
     categoria = models.ForeignKey(Categoria, on_delete=models.DO_NOTHING)
     descricao = models.TextField()
     data = models.DateField()
