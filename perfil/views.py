@@ -1,17 +1,26 @@
 from django.contrib import messages
 from django.contrib.messages import constants
 from django.shortcuts import redirect, render
+from django.utils.timezone import now
+
+from extrato.models import Valores
 
 from .models import Categoria, Conta
 
 
 def home(request):
     contas = Conta.objects.all()
+    valores = Valores.objects.filter(data__month=now().month)
+    total_entradas = sum(valor.valor for valor in valores.filter(tipo='E'))
+    total_saidas = sum(valor.valor for valor in valores.filter(tipo='S'))
     total_contas = sum(conta.valor for conta in contas)
-    return render(request, 'home.html', {
-        'contas': contas,
-        'total_contas': total_contas,
-    })
+    return render(
+        request, 'home.html', {
+            'contas': contas,
+            'total_contas': total_contas,
+            'total_entradas': total_entradas,
+            'total_saidas': total_saidas,
+        })
 
 
 def gerenciar(request):
@@ -99,3 +108,17 @@ def update_categoria(request, id):
         messages.add_message(request, constants.ERROR, 'Categoria não encontrada')
     finally:
         return redirect('/perfil/gerenciar/')
+
+
+def dashboard(request):
+    categorias = Categoria.objects.all()
+
+    dados = {
+        categoria.categoria:
+            sum(valor.valor for valor in Valores.objects.filter(categoria=categoria))
+        for categoria in categorias
+    }
+    return render(request, 'dashboard.html', {
+        'labels': list(dados.keys()),
+        'values': list(dados.values())
+    })
