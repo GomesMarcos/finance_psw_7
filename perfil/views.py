@@ -3,6 +3,7 @@ from django.contrib.messages import constants
 from django.shortcuts import redirect, render
 from django.utils.timezone import now
 
+from core.utils import calcula_equilibrio_financeiro, get_total_contas
 from extrato.models import Valores
 
 from .models import Categoria, Conta
@@ -14,12 +15,27 @@ def home(request):
     total_entradas = sum(valor.valor for valor in valores.filter(tipo='E'))
     total_saidas = sum(valor.valor for valor in valores.filter(tipo='S'))
     total_contas = sum(conta.valor for conta in contas)
+
+    percentual_gastos_essenciais, percentual_gastos_nao_essenciais = calcula_equilibrio_financeiro(
+        valores.filter(tipo='S'))
+
+    contas_pagas, contas_vencidas, contas_proximas_vencimento, restantes = get_total_contas(
+        now().month,
+        now().day)
+
     return render(
         request, 'home.html', {
             'contas': contas,
             'total_contas': total_contas,
             'total_entradas': total_entradas,
             'total_saidas': total_saidas,
+            'total_livre': total_entradas - total_saidas,
+            'percentual_gastos_essenciais': percentual_gastos_essenciais,
+            'percentual_gastos_nao_essenciais': percentual_gastos_nao_essenciais,
+            'total_contas_pagas': contas_pagas.count(),
+            'total_contas_vencidas': contas_vencidas.count(),
+            'total_contas_proximas_vencimento': contas_proximas_vencimento.count(),
+            'total_restantes': restantes.count(),
         })
 
 
