@@ -2,7 +2,6 @@
 {% load static %}
 {% block 'head' %}
   <link href="{% static 'perfil/css/home.css' %}" rel="stylesheet">
-  <link href="{% static 'perfil/css/gerenciar.css' %}" rel="stylesheet">
 {% endblock %}
 {% block 'body' %}
   <div class="container">
@@ -35,7 +34,11 @@
           <div class="row">
             <div class="col-md">
               <label>Valor</label>
-              <input name="valor" type="number" class="form-control">
+              <input name="valor"
+                     type="number"
+                     min="0.01"
+                     step="0.01"
+                     class="form-control">
             </div>
             <div class="col-md">
               <label>Dia de pagamento</label>
@@ -48,7 +51,10 @@
           </div>
           <br>
           <br>
-          <input type="submit" style="width:40%;" class="botao-principal">
+          <input type="submit"
+                 style="width:100%"
+                 class="botao-principal"
+                 value="Adicionar">
         </form>
       </div>
       <div class="col-md-8"></div>
